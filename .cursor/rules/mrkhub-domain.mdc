@@ -1,0 +1,12 @@
+---
+description: mrkhub 业务与安全约束
+globs: src/**/*
+alwaysApply: false
+---
+
+# mrkhub
+
+- `/mrkhub` 由 `registerCommand` handler 处理，安装逻辑走 `installer/`，不交给模型写路径
+- skill 名：`a-z0-9_`，字母开头，最长 32
+- 默认安装目录 `~/.agents/skills/`
+- GitHub 索引与匹配保持纯函数，便于单测

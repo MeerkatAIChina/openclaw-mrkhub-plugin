@@ -1,0 +1,54 @@
+{
+  "name": "@meerkat/openclaw-mrkhub-plugin",
+  "version": "0.1.0",
+  "description": "Meerkat skills hub: search and install skills from GitHub via /mrkhub",
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "files": [
+    "dist",
+    "openclaw.plugin.json"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src test",
+    "prepublishOnly": "pnpm run build"
+  },
+  "openclaw": {
+    "extensions": ["./dist/index.js"],
+    "compat": {
+      "pluginApi": ">=2026.5.12",
+      "minGatewayVersion": "2026.5.12"
+    },
+    "build": {
+      "openclawVersion": "2026.5.12",
+      "pluginSdkVersion": "2026.5.12"
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/node": "^22.15.29",
+    "eslint": "^9.28.0",
+    "openclaw": "2026.5.12",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.1",
+    "vitest": "^3.2.1"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.33"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.5.12"
+  },
+  "peerDependenciesMeta": {
+    "openclaw": {
+      "optional": true
+    }
+  }
+}

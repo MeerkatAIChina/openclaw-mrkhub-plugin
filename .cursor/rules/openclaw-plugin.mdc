@@ -1,0 +1,12 @@
+---
+description: OpenClaw 插件 SDK 导入与入口约定
+alwaysApply: true
+---
+
+# OpenClaw 插件
+
+- 入口使用 `definePluginEntry`（`openclaw/plugin-sdk/plugin-entry`）
+- SDK 只从子路径导入，禁止 `openclaw/plugin-sdk` 根 barrel
+- 禁止通过 SDK 路径导入本插件自身
+- 发布时 `openclaw.extensions` 指向 `dist/*.js`
+- `openclaw.plugin.json` 中 `contracts.tools` 必须与 `registerTool` 名称一致

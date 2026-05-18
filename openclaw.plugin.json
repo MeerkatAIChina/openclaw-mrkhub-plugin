@@ -1,0 +1,38 @@
+{
+  "id": "mrkhub",
+  "name": "Meerkat Skills Hub",
+  "description": "Search and install Meerkat skills from GitHub via /mrkhub",
+  "contracts": {
+    "tools": ["mrkhub_search", "mrkhub_install"]
+  },
+  "toolMetadata": {
+    "mrkhub_search": { "optional": true },
+    "mrkhub_install": { "optional": true }
+  },
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "repositories": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "GitHub repos (owner/repo or full URL), skills root auto-detected"
+      },
+      "installDir": {
+        "type": "string",
+        "description": "Target directory for installed skills (default ~/.agents/skills)"
+      },
+      "githubToken": {
+        "type": "string",
+        "description": "Optional GitHub token for API rate limits or private repos"
+      },
+      "defaultRef": {
+        "type": "string",
+        "description": "Default git ref (branch/tag), default main"
+      }
+    }
+  }
+}
