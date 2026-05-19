@@ -22,13 +22,13 @@ OpenClaw 插件：通过 `/mrkhub` 从**自有 GitHub 仓库**检索并安装 Me
 
 ```bash
 # 1. 构建插件（git 安装前必须已有 dist/）
-git clone https://github.com/MeerkatAIChina/meerkat-plugins.git
-cd meerkat-plugins
+git clone https://github.com/MeerkatAIChina/openclaw-mrkhub-plugin.git
+cd openclaw-mrkhub-plugin
 pnpm install
 pnpm build
 
 # 2. 安装插件
-openclaw plugins install git:github.com/MeerkatAIChina/meerkat-plugins
+openclaw plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin
 
 # 3. 重启 Gateway
 openclaw gateway restart
@@ -50,12 +50,12 @@ openclaw plugins inspect mrkhub --runtime --json
 
 ```bash
 # 从 GitHub（推荐）
-openclaw plugins install git:github.com/MeerkatAIChina/meerkat-plugins
-openclaw plugins install git:github.com/MeerkatAIChina/meerkat-plugins@main
+openclaw plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin
+openclaw plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin@main
 
 # 本地开发
-openclaw plugins install ./path/to/meerkat-plugins
-openclaw plugins install ./path/to/meerkat-plugins --force
+openclaw plugins install ./path/to/openclaw-mrkhub-plugin
+openclaw plugins install ./path/to/openclaw-mrkhub-plugin --force
 
 # 更新
 openclaw plugins update mrkhub
@@ -64,7 +64,7 @@ openclaw plugins update mrkhub
 聊天内安装（需 `commands.plugins: true`）：
 
 ```
-/plugins install git:github.com/MeerkatAIChina/meerkat-plugins
+/plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin
 ```
 
 ## 配置
