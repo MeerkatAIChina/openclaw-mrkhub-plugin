@@ -18,6 +18,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src test",
+    "smoke": "pnpm run build && node scripts/smoke.mjs",
+    "install:local": "pnpm run build && node scripts/install-extension.mjs",
+    "verify": "pnpm run typecheck && pnpm test && pnpm run lint && pnpm run build",
     "prepublishOnly": "pnpm run build"
   },
   "openclaw": {

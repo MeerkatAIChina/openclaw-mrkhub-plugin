@@ -154,20 +154,22 @@ openclaw.plugin.json # 插件清单
 ## 开发与测试
 
 ```bash
-pnpm install
-pnpm typecheck
-pnpm test
-pnpm lint
-pnpm build
+pnpm install          # 安装依赖
+pnpm verify           # typecheck + test + lint + build
+pnpm smoke            # 端到端冒烟（GitHub 索引 / 搜索 / 安装）
+pnpm install:local    # 构建并安装到 ~/.openclaw/extensions/mrkhub
 ```
 
-本地联调：
+本地联调（OpenClaw 已安装时）：
 
 ```bash
-pnpm build
-openclaw plugins install .
+pnpm install:local
+pnpm exec openclaw plugins enable mrkhub
+pnpm exec openclaw plugins inspect mrkhub --runtime --json
 openclaw gateway restart
 ```
+
+> `openclaw plugins install .` 会安装完整 devDependencies（含 openclaw 本体），耗时很长。日常开发推荐 `pnpm install:local`。
 
 ## 故障排查
 

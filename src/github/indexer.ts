@@ -26,9 +26,13 @@ function parseSkillFrontmatter(raw: string): {
     return {};
   }
   const block = match[1]!;
-  const name = block.match(/^name:\s*(.+)$/m)?.[1]?.trim();
-  const description = block.match(/^description:\s*(.+)$/m)?.[1]?.trim();
-  return { name, description };
+  const strip = (v: string) => v.trim().replace(/^["']|["']$/g, "");
+  const name = block.match(/^name:\s*(.+)$/m)?.[1];
+  const description = block.match(/^description:\s*(.+)$/m)?.[1];
+  return {
+    name: name ? strip(name) : undefined,
+    description: description ? strip(description) : undefined,
+  };
 }
 
 export function resolveRepositories(config: MrkhubConfig): ResolvedRepo[] {
@@ -54,9 +58,33 @@ export async function indexSkillsFromRepo(
     repo.ref,
   );
   const items = await client.fetchJson<GitHubContentItem[]>(url);
-  const dirs = items.filter((item) => item.type === "dir");
   const entries: SkillIndexEntry[] = [];
 
+  const rootSkillMd = items.find(
+    (item) => item.type === "file" && item.name === "SKILL.md",
+  );
+  if (rootSkillMd?.download_url) {
+    const res = await fetch(rootSkillMd.download_url);
+    if (res.ok) {
+      const raw = await res.text();
+      const meta = parseSkillFrontmatter(raw);
+      const folderName = repo.skillsPath
+        .split("/")
+        .pop()!
+        .toLowerCase()
+        .replace(/[^a-z0-9_]/g, "_");
+      const rawName = (meta.name ?? folderName).toLowerCase();
+      const name = rawName.replace(/[^a-z0-9_]/g, "_").replace(/^_+/, "");
+      entries.push({
+        name: name || folderName,
+        description: meta.description ?? folderName,
+        path: repo.skillsPath,
+        repo,
+      });
+    }
+  }
+
+  const dirs = items.filter((item) => item.type === "dir");
   for (const dir of dirs) {
     const skillMdUrl = client.rawFileUrl(
       repo.owner,
@@ -71,7 +99,8 @@ export async function indexSkillsFromRepo(
     const raw = await res.text();
     const meta = parseSkillFrontmatter(raw);
     const folderName = dir.name.toLowerCase().replace(/[^a-z0-9_]/g, "_");
-    const name = (meta.name ?? folderName).toLowerCase();
+    const rawName = (meta.name ?? folderName).toLowerCase();
+    const name = rawName.replace(/[^a-z0-9_]/g, "_").replace(/^_+/, "") || folderName;
     entries.push({
       name,
       description: meta.description ?? dir.name,
