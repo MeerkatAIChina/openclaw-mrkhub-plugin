@@ -107,7 +107,7 @@ openclaw plugins update mrkhub
 
 默认索引仓库：
 
-- [manufacturing-ai-efficiency-Skill](https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill)（skills 根目录：`manufacturing-ai-efficiency-pro`）
+- [manufacturing-ai-efficiency-Skill](https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/ling/skills)（skills 根目录：`skills`；`owner/repo` 写法未带路径时默认同此）
 
 ## 使用示例
 

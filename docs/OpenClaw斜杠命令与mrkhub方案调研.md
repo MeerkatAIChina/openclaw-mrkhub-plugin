@@ -88,7 +88,7 @@ command-tool: <tool_name>
 自定义斜杠命令 `/mrkhub`，从**自有 GitHub 仓库**（非官方 ClawHub）查询、匹配、安装 skills。
 
 **仓库示例：**  
-https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/main/manufacturing-ai-efficiency-pro
+https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/ling/skills
 
 | 场景 | 用户输入示例 | 期望行为 |
 |------|-------------|----------|
@@ -226,4 +226,4 @@ openclaw gateway restart
 
 ## 7. 自有仓库（业务相关）
 
-- Skills 源仓库：https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/main/manufacturing-ai-efficiency-pro
+- Skills 源仓库：https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/ling/skills（默认扫描 `skills/` 目录）
