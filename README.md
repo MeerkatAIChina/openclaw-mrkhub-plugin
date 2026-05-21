@@ -160,16 +160,126 @@ pnpm smoke            # 端到端冒烟（GitHub 索引 / 搜索 / 安装）
 pnpm install:local    # 构建并安装到 ~/.openclaw/extensions/mrkhub
 ```
 
-本地联调（OpenClaw 已安装时）：
+### 本地联调（以 WSL 为例）
 
-```bash
-pnpm install:local
-pnpm exec openclaw plugins enable mrkhub
-pnpm exec openclaw plugins inspect mrkhub --runtime --json
-openclaw gateway restart
-```
+前提条件：本机 WSL 中已有一个正常运行的 OpenClaw。
 
-> `openclaw plugins install .` 会安装完整 devDependencies（含 openclaw 本体），耗时很长。日常开发推荐 `pnpm install:local`。
+1. 安装依赖并构建（建议将项目放到 WSL 中的目录）
+
+   ```bash
+   # 安装 pnpm（若未装）
+   # npm install -g pnpm
+   
+   pnpm install
+   
+   # 类型检查 + 单测 + 构建
+   pnpm verify
+   
+   # 或仅构建
+   pnpm build
+   ```
+
+2. 将插件安装到 WSL 的 OpenClaw 中
+
+   ```bash
+   # 构建并复制到 ~/.openclaw/extensions/mrkhub，只装生产依赖
+   pnpm install:local
+   
+   # 启用插件
+   openclaw plugins enable mrkhub
+   
+   # 验证运行时是否 loaded
+   openclaw plugins inspect mrkhub --runtime --json
+   # 期望看到: "status": "loaded", "commands": ["mrkhub"]
+   ```
+
+   **备选1：openclaw plugins install 直接从 git 安装** 
+
+   ```bash
+   # 从 Github 安装
+   openclaw plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin@main
+   
+   openclaw plugins enable mrkhub
+   ```
+
+   **备选2：openclaw plugins install 链接本地源码** 
+
+   改代码后需重启 Gateway
+
+   ```bash
+   # 从本地仓库链接
+   openclaw plugins install --link ~/projects/meerkat-plugins
+   
+   openclaw plugins enable mrkhub
+   ```
+
+3. 在 OpenClaw 中配置插件（可选）
+
+   ```bash
+   # ~/.openclaw/openclaw.json 示例：
+   {
+     plugins: {
+       entries: {
+         mrkhub: {
+           enabled: true,
+           config: {
+             repositories: ["MeerkatAIChina/manufacturing-ai-efficiency-Skill"],
+             // githubToken: "ghp_xxx",  // 可选，防 GitHub 限流
+           },
+         },
+       },
+     },
+     commands: {
+       plugins: true,  // 若要在聊天里用 /plugins install
+     },
+   }
+   ```
+
+4. 重启 Gateway 使插件生效
+
+   ```bash
+   openclaw gateway restart
+   
+   # 再次确认运行时
+   openclaw plugins inspect mrkhub --runtime --json
+   ```
+
+5. 不启 Gateway 的冒烟（可选）
+
+   ```bash
+   # 只测业务逻辑：help / 搜索 / 安装到 ~/.agents/skills
+   pnpm smoke
+   ```
+
+6. 在聊天里测 `/mrkhub`
+
+   Gateway 跑在 WSL 时，你的聊天客户端要连 WSL 这台 Gateway（不是 Windows 上另一套 openclaw）。
+
+   ```bash
+   /mrkhub 帮助
+   /mrkhub 制造业 AI 提效
+   /mrkhub 安装 manufacturing_ai_efficiency_pro
+   ```
+
+   安装 skill 后：
+
+   ```bash
+   /new
+   # 或
+   openclaw gateway restart
+   ```
+
+7. 改代码后的更新流程
+
+   ```bash
+   # 需要重新构建
+   pnpm build
+   pnpm install:local # 覆盖之前的 ~/.openclaw/extensions/mrkhub，也可以只用其他两种备选方式
+   
+   # 然后重启网关
+   openclaw gateway restart
+   openclaw plugins inspect mrkhub --runtime --json
+   ```
 
 ## 故障排查
 

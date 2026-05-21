@@ -154,7 +154,7 @@ openclaw plugins install clawhub:my-plugin
 openclaw plugins install npm:@scope/pkg
 openclaw plugins install git:github.com/owner/repo@main
 openclaw plugins install ./my-plugin
-openclaw plugins install ./my-plugin --link   # 开发时链到源码
+openclaw plugins install --link ./my-plugin   # 开发时链到源码
 ```
 
 ### 2.3 斜杠命令执行路径
@@ -393,7 +393,7 @@ pnpm install
 pnpm run build
 
 # 方式 A：链接安装（改代码后重启 Gateway）
-openclaw plugins install ./my-plugin --link --force
+openclaw plugins install --link ./my-plugin
 
 # 方式 B：仅拷贝 dist + 生产依赖（避免 install . 拉完整 devDeps）
 # 可参考本仓库 scripts/install-extension.mjs

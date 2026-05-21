@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEFAULT_REF,
   parseRepositorySpec,
   resolveConfig,
 } from "../../src/config/defaults.js";
@@ -8,7 +9,7 @@ describe("resolveConfig", () => {
   it("uses defaults when empty", () => {
     const cfg = resolveConfig(undefined);
     expect(cfg.repositories.length).toBeGreaterThan(0);
-    expect(cfg.defaultRef).toBe("main");
+    expect(cfg.defaultRef).toBe(DEFAULT_REF);
   });
 });
 
