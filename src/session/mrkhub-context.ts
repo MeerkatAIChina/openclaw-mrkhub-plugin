@@ -24,6 +24,10 @@ export function resolveInstallNameFromSession(
   state: MrkhubSessionState,
   text: string,
 ): string | undefined {
+  if (/^(安装|install)$/i.test(text.trim()) && state.lastResults[0]) {
+    return state.lastResults[0].name;
+  }
+
   const lower = text.toLowerCase();
   const ordinals: Record<string, number> = {
     第一个: 0,

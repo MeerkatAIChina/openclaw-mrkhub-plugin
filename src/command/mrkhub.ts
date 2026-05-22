@@ -21,7 +21,7 @@ const HELP_TEXT = `**Meerkat Skills Hub** (\`/mrkhub\`)
 
 - 查找：\`/mrkhub 产品市场调研\`
 - 安装：\`/mrkhub 安装 manufacturing_value_chain\`
-- 多轮：先搜索后 \`/mrkhub 那就安装第一个\`
+- 多轮：先搜索后 \`/mrkhub 安装\` 或 \`/mrkhub 那就安装第一个\`
 
 安装后请执行 \`/new\` 或 \`openclaw gateway restart\` 以加载新 skill。`;
 

@@ -17,6 +17,10 @@ export function parseIntent(input: string): MrkhubIntent {
     return { kind: "help" };
   }
 
+  if (/^(安装|install)$/i.test(text)) {
+    return { kind: "install", skillName: "" };
+  }
+
   const lower = text.toLowerCase();
   if (
     /(?:第一|第二|第三|那个|这个|那就).*(?:安装|装)/.test(text) ||

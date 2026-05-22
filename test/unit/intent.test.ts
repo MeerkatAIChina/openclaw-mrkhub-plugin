@@ -21,6 +21,11 @@ describe("parseIntent", () => {
     });
   });
 
+  it("parses bare install as install intent", () => {
+    expect(parseIntent("安装")).toEqual({ kind: "install", skillName: "" });
+    expect(parseIntent("install")).toEqual({ kind: "install", skillName: "" });
+  });
+
   it("parses follow-up install without name", () => {
     expect(parseIntent("那就安装第一个")).toEqual({
       kind: "install",
