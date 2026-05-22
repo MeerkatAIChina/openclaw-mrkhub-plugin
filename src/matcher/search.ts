@@ -2,6 +2,13 @@ import type { SkillIndexEntry } from "../github/indexer.js";
 
 export type SearchHit = SkillIndexEntry & { score: number };
 
+const QUERY_FILLER_RE =
+  /(?:帮我|给我|请|找|搜索|查询|有没有|哪些|什么|一下|相关的?|skills?|skill)/gi;
+
+function cleanQuery(query: string): string {
+  return query.replace(QUERY_FILLER_RE, " ").replace(/\s+/g, " ").trim();
+}
+
 function tokenize(text: string): string[] {
   return text
     .toLowerCase()
@@ -14,8 +21,9 @@ export function searchSkills(
   query: string,
   limit = 5,
 ): SearchHit[] {
-  const tokens = tokenize(query);
-  if (tokens.length === 0) {
+  const cleaned = cleanQuery(query);
+  const tokens = tokenize(cleaned || query);
+  if (tokens.length === 0 && cleaned.length < 2) {
     return [];
   }
 
@@ -31,6 +39,13 @@ export function searchSkills(
       .toLowerCase();
 
     let score = 0;
+    const phrase = (cleaned || query).toLowerCase();
+    if (phrase.length >= 2 && haystack.includes(phrase)) {
+      score += 15;
+    }
+    if (phrase.length >= 2 && entry.description.toLowerCase().includes(phrase)) {
+      score += 10;
+    }
     for (const token of tokens) {
       if (entry.name.includes(token)) {
         score += 10;

@@ -36,4 +36,24 @@ describe("searchSkills", () => {
   it("returns empty for no match", () => {
     expect(searchSkills(entries, "xyznone")).toEqual([]);
   });
+
+  it("matches Chinese phrase after filler removal", () => {
+    const hits = searchSkills(
+      [
+        {
+          name: "fast_moving_consumer_goods_supply_chain",
+          description: "快消品供应链优化",
+          path: "skills/commercial/fast-moving-consumer-goods-supply-chain",
+          repo: {
+            owner: "MeerkatAIChina",
+            repo: "demo",
+            ref: "main",
+            skillsPath: "skills",
+          },
+        },
+      ],
+      "帮我找快消品供应链优化相关的 skills",
+    );
+    expect(hits[0]?.name).toBe("fast_moving_consumer_goods_supply_chain");
+  });
 });

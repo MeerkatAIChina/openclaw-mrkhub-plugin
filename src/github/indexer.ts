@@ -1,6 +1,11 @@
 import { parseRepositorySpec } from "../config/defaults.js";
 import type { MrkhubConfig, ResolvedRepo } from "../config/types.js";
 import { GitHubClient } from "./client.js";
+import {
+  normalizeSkillId,
+  parseSkillIndexYaml,
+  type SkillIndexYamlEntry,
+} from "./skill-index.js";
 
 export type SkillIndexEntry = {
   name: string;
@@ -47,10 +52,64 @@ export function resolveRepositories(config: MrkhubConfig): ResolvedRepo[] {
   });
 }
 
+const SKILL_INDEX_FILE = "skill-index.yaml";
+
+function entryFromSkillIndexItem(
+  item: SkillIndexYamlEntry,
+  repo: ResolvedRepo,
+): SkillIndexEntry | undefined {
+  const name = normalizeSkillId(item.skill_id);
+  if (!name) {
+    return undefined;
+  }
+  const tags = [item.category, item.type].filter(
+    (t): t is string => typeof t === "string" && t.length > 0,
+  );
+  return {
+    name,
+    description: item.name,
+    path: item.path,
+    repo,
+    tags: tags.length > 0 ? tags : undefined,
+  };
+}
+
+async function indexSkillsFromSkillIndexFile(
+  client: GitHubClient,
+  repo: ResolvedRepo,
+): Promise<SkillIndexEntry[] | undefined> {
+  const url = client.rawFileUrl(
+    repo.owner,
+    repo.repo,
+    SKILL_INDEX_FILE,
+    repo.ref,
+  );
+  const res = await fetch(url);
+  if (res.status === 404) {
+    return undefined;
+  }
+  if (!res.ok) {
+    throw new Error(`读取 ${SKILL_INDEX_FILE} 失败: ${res.status}`);
+  }
+  const raw = await res.text();
+  const items = parseSkillIndexYaml(raw);
+  if (items.length === 0) {
+    return undefined;
+  }
+  return items
+    .map((item) => entryFromSkillIndexItem(item, repo))
+    .filter((entry): entry is SkillIndexEntry => entry !== undefined);
+}
+
 export async function indexSkillsFromRepo(
   client: GitHubClient,
   repo: ResolvedRepo,
 ): Promise<SkillIndexEntry[]> {
+  const fromIndex = await indexSkillsFromSkillIndexFile(client, repo);
+  if (fromIndex) {
+    return fromIndex;
+  }
+
   const url = client.repoContentsUrl(
     repo.owner,
     repo.repo,
@@ -130,5 +189,6 @@ export async function findSkillByName(
   skillName: string,
 ): Promise<SkillIndexEntry | undefined> {
   const index = await loadSkillIndex(config);
-  return index.find((e) => e.name === skillName);
+  const normalized = normalizeSkillId(skillName);
+  return index.find((e) => e.name === normalized);
 }
