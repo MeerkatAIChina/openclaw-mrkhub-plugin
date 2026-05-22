@@ -1,4 +1,4 @@
-# @meerkat/openclaw-mrkhub-plugin
+# @meerkat-ai/openclaw-mrkhub-plugin
 
 OpenClaw 插件：通过 `/mrkhub` 从**自有 GitHub 仓库**检索并安装 Meerkat skills（不依赖 ClawHub）。
 
@@ -49,7 +49,10 @@ openclaw plugins inspect mrkhub --runtime --json
 ## 安装方式
 
 ```bash
-# 从 GitHub（推荐）
+# 从 npm（推荐）
+openclaw plugins install @meerkat-ai/openclaw-mrkhub-plugin
+
+# 从 GitHub
 openclaw plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin
 openclaw plugins install git:github.com/MeerkatAIChina/openclaw-mrkhub-plugin@main
 
