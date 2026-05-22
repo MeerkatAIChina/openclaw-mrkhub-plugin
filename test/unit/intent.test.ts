@@ -27,6 +27,20 @@ describe("parseIntent", () => {
       skillName: "",
     });
   });
+
+  it("parses long install name without truncation", () => {
+    expect(parseIntent("安装 fast_moving_consumer_goods_supply_chain")).toEqual({
+      kind: "install",
+      skillName: "fast_moving_consumer_goods_supply_chain",
+    });
+  });
+
+  it("parses install name with hyphens", () => {
+    expect(parseIntent("安装 fast-moving-consumer-goods-supply-chain")).toEqual({
+      kind: "install",
+      skillName: "fast-moving-consumer-goods-supply-chain",
+    });
+  });
 });
 
 describe("isValidSkillName", () => {

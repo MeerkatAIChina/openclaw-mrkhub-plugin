@@ -1,7 +1,8 @@
 import { homedir } from "node:os";
 import { isAbsolute, join, relative, resolve } from "node:path";
 
-const SKILL_NAME_RE = /^[a-z][a-z0-9_]{0,31}$/;
+const SKILL_NAME_MAX_LEN = 63;
+const SKILL_NAME_RE = new RegExp(`^[a-z][a-z0-9_]{0,${SKILL_NAME_MAX_LEN}}$`);
 
 export function defaultInstallDir(): string {
   return join(homedir(), ".agents", "skills");
@@ -15,7 +16,7 @@ export function resolveInstallDir(configured?: string): string {
 export function assertValidSkillName(name: string): void {
   if (!SKILL_NAME_RE.test(name)) {
     throw new Error(
-      `无效的 skill 名称 "${name}"，仅允许 a-z、0-9、下划线，且以字母开头，最长 32 字符`,
+      `无效的 skill 名称 "${name}"，仅允许 a-z、0-9、下划线，且以字母开头，最长 ${SKILL_NAME_MAX_LEN + 1} 字符`,
     );
   }
 }

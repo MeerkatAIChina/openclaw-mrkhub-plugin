@@ -1,11 +1,14 @@
 import type { MrkhubIntent } from "./types.js";
 
-const SKILL_NAME_RE = /^[a-z][a-z0-9_]{0,31}$/;
+const SKILL_NAME_MAX_LEN = 63;
+const SKILL_NAME_RE = new RegExp(`^[a-z][a-z0-9_]{0,${SKILL_NAME_MAX_LEN}}$`);
+const INSTALL_NAME_RE = new RegExp(`^[a-z][a-z0-9_-]{0,${SKILL_NAME_MAX_LEN}}$`);
+const INSTALL_NAME_CAPTURE = `[a-z][a-z0-9_-]{1,${SKILL_NAME_MAX_LEN}}`;
 
 const INSTALL_PATTERNS = [
-  /(?:安装|install)\s+[`'"]?([a-z][a-z0-9_]{0,31})[`'"]?/i,
-  /(?:给我|帮我)?安装\s+([a-z][a-z0-9_]{0,31})/i,
-  /^([a-z][a-z0-9_]{0,31})\s*$/i,
+  new RegExp(`(?:安装|install)\\s+[\`'"]?(${INSTALL_NAME_CAPTURE})[\`'"]?`, "i"),
+  new RegExp(`(?:给我|帮我)?安装\\s+(${INSTALL_NAME_CAPTURE})`, "i"),
+  new RegExp(`^(${INSTALL_NAME_CAPTURE})\\s*$`, "i"),
 ];
 
 export function parseIntent(input: string): MrkhubIntent {
@@ -29,12 +32,14 @@ export function parseIntent(input: string): MrkhubIntent {
   ) {
     for (const pattern of INSTALL_PATTERNS) {
       const match = text.match(pattern);
-      if (match?.[1] && SKILL_NAME_RE.test(match[1])) {
+      if (match?.[1] && INSTALL_NAME_RE.test(match[1])) {
         return { kind: "install", skillName: match[1].toLowerCase() };
       }
     }
-    const quoted = text.match(/[`'"]([a-z][a-z0-9_]{0,31})[`'"]/i);
-    if (quoted?.[1]) {
+    const quoted = text.match(
+      new RegExp(`[\`'"](${INSTALL_NAME_CAPTURE})[\`'"]`, "i"),
+    );
+    if (quoted?.[1] && INSTALL_NAME_RE.test(quoted[1])) {
       return { kind: "install", skillName: quoted[1].toLowerCase() };
     }
   }

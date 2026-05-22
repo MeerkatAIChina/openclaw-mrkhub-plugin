@@ -39,7 +39,7 @@ export function resolveInstallNameFromSession(
     }
   }
   if (/那就|这个|那个/.test(text) && state.lastResults[0]) {
-    const explicit = text.match(/[`'"]?([a-z][a-z0-9_]{0,31})[`'"]?/i);
+    const explicit = text.match(/[`'"]?([a-z][a-z0-9_-]{1,63})[`'"]?/i);
     if (explicit?.[1]) {
       return explicit[1].toLowerCase();
     }

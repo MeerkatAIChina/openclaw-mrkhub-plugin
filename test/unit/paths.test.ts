@@ -7,6 +7,7 @@ import {
 describe("skill paths", () => {
   it("validates skill names", () => {
     expect(() => assertValidSkillName("ok_skill")).not.toThrow();
+    expect(() => assertValidSkillName("fast_moving_consumer_goods_supply_chain")).not.toThrow();
     expect(() => assertValidSkillName("../evil")).toThrow();
   });
 
