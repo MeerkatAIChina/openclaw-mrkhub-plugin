@@ -9,7 +9,8 @@
     "url": "git+https://github.com/MeerkatAIChina/openclaw-mrkhub-plugin.git"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "packageManager": "pnpm@10.20.0",
   "engines": {
@@ -31,7 +32,9 @@
     "prepublishOnly": "pnpm run build"
   },
   "openclaw": {
-    "extensions": ["./dist/index.js"],
+    "extensions": [
+      "./dist/index.js"
+    ],
     "compat": {
       "pluginApi": ">=2026.5.12",
       "minGatewayVersion": "2026.5.12"
