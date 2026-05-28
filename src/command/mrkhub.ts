@@ -1,6 +1,6 @@
 import { resolveConfig } from "../config/defaults.js";
 import type { MrkhubConfig } from "../config/types.js";
-import { findSkillByName, loadSkillIndex } from "../github/indexer.js";
+import { findSkillByName, loadSkillIndex } from "../storage/indexer.js";
 import { installSkill } from "../installer/install.js";
 import { parseIntent } from "../intent/parse.js";
 import { searchSkills } from "../matcher/search.js";
@@ -60,7 +60,7 @@ export async function handleMrkhubCommand(
 
   const entry = await findSkillByName(config, skillName);
   if (!entry) {
-    return `未找到 skill \`${skillName}\`。请先 \`/mrkhub <关键词>\` 搜索，或检查仓库索引。`;
+    return `未找到 skill \`${skillName}\`。请先 \`/mrkhub <关键词>\` 搜索，或检查技能索引。`;
   }
 
   const result = await installSkill(config, entry);

@@ -15,7 +15,7 @@ export function formatSearchResults(hits: SearchHit[]): string {
   }
   const lines = hits.map(
     (h, i) =>
-      `${i + 1}. **${h.name}** — ${h.description}\n   路径: \`${h.path}\` (${h.repo.owner}/${h.repo.repo})`,
+      `${i + 1}. **${h.name}** — ${h.description}\n   路径: \`${h.path}\``,
   );
   return `找到 ${hits.length} 个候选 skill：\n\n${lines.join("\n\n")}\n\n安装示例：\`/mrkhub 安装 ${hits[0]!.name}\``;
 }

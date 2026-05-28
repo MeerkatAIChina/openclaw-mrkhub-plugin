@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-这是一个 OpenClaw 插件，提供 `/mrkhub` 斜杠命令，用于从自有 GitHub 仓库搜索和安装 Meerkat skills（不依赖 ClawHub）。
+这是一个 OpenClaw 插件，提供 `/mrkhub` 斜杠命令，用于从阿里云 OSS 搜索和安装 Meerkat skills（不依赖 ClawHub）。
 
 ## Common Commands
 
@@ -24,7 +24,7 @@ pnpm test:watch
 # 运行单个测试文件
 pnpm vitest run test/unit/matcher.test.ts
 
-# 端到端冒烟测试（测试 GitHub 索引/搜索/安装流程）
+# 端到端冒烟测试（测试 OSS 索引/搜索/安装流程）
 pnpm smoke
 
 # 本地安装到 ~/.openclaw/extensions/mrkhub
@@ -48,12 +48,12 @@ pnpm typecheck
 
 - `src/command/mrkhub.ts`: 命令处理器，协调搜索、安装、多轮对话流程
 - `src/intent/parse.ts`: 解析用户意图（help/search/install/指代性安装）
-- `src/config/defaults.ts`: 配置解析，默认仓库 `MeerkatAIChina/manufacturing-ai-efficiency-Skill`，默认分支 `ling`
-- `src/github/indexer.ts`: 从 GitHub 仓库索引 skills，支持 `skill-index.yaml` 或遍历目录
-- `src/github/client.ts`: GitHub API 客户端
-- `src/github/skill-index.ts`: `skill-index.yaml` 解析与 skill ID 规范化
+- `src/config/defaults.ts`: 配置解析，默认 OSS base URL `https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com`
+- `src/oss/client.ts`: OSS 客户端工具，构建公共读 URL
+- `src/storage/indexer.ts`: 从 OSS 加载 skill 索引
+- `src/storage/skill-index.ts`: `skill-index.yaml` 解析与 skill ID 规范化
 - `src/matcher/search.ts`: 语义/关键词匹配算法（纯函数，便于单测）
-- `src/installer/install.ts`: 下载 skill 到本地目录
+- `src/installer/install.ts`: 从 OSS 下载 skill 文件到本地目录
 - `src/installer/paths.ts`: 路径解析（`~/.agents/skills/`）
 - `src/session/mrkhub-context.ts`: 多轮对话状态管理（基于 sessionKey 存储上次搜索结果）
 - `src/tools/result.ts`: Agent 工具返回结果格式化
@@ -69,13 +69,14 @@ pnpm typecheck
   - `/mrkhub` 由 `registerCommand` handler 处理，安装逻辑走 `installer/`，不交给模型写路径
   - Skill 命名: `a-z0-9_`，字母开头，最长 32 字符
   - 默认安装目录: `~/.agents/skills/`
-  - GitHub 索引与匹配保持纯函数，便于单测
+  - 索引与匹配保持纯函数，便于单测
 - **会话状态**: 使用 Map 存储，key 为 `sessionKey ?? sessionId ?? "default"`
 
-### 仓库索引策略
+### OSS 索引策略
 
-1. 优先读取 `skill-index.yaml`（如果存在）
-2. 否则遍历 `skills/` 目录，读取每个子目录的 `SKILL.md` frontmatter
+1. 从配置的 `ossBaseUrl` 获取 `skill-index.yaml`
+2. 解析索引文件获取 skill 列表（包含 name、description、path）
+3. 安装时从 OSS 直接下载 skill 目录下的文件（SKILL.md、skill.json 等）
 
 ## OpenClaw 集成
 
@@ -87,4 +88,4 @@ pnpm typecheck
 
 - 使用 Vitest，测试文件位于 `test/unit/*.test.ts`
 - 核心逻辑（matcher、intent、skill-index）设计为纯函数，便于单元测试
-- 冒烟测试需要 GitHub 访问，可能受 API 限流影响
+- 冒烟测试需要 OSS 访问

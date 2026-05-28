@@ -1,34 +1,24 @@
 import { describe, expect, it } from "vitest";
 import {
-  DEFAULT_REF,
-  parseRepositorySpec,
+  DEFAULT_OSS_BASE_URL,
   resolveConfig,
 } from "../../src/config/defaults.js";
 
 describe("resolveConfig", () => {
-  it("uses defaults when empty", () => {
+  it("uses default OSS base URL when empty", () => {
     const cfg = resolveConfig(undefined);
-    expect(cfg.repositories.length).toBeGreaterThan(0);
-    expect(cfg.defaultRef).toBe(DEFAULT_REF);
-  });
-});
-
-describe("parseRepositorySpec", () => {
-  it("parses owner/repo", () => {
-    const r = parseRepositorySpec("MeerkatAIChina/foo", "main");
-    expect(r.owner).toBe("MeerkatAIChina");
-    expect(r.repo).toBe("foo");
-    expect(r.ref).toBe("main");
+    expect(cfg.ossBaseUrl).toBe(DEFAULT_OSS_BASE_URL);
+    expect(cfg.installDir).toBeUndefined();
   });
 
-  it("parses github URL with tree path", () => {
-    const r = parseRepositorySpec(
-      "https://github.com/MeerkatAIChina/foo/tree/main/skills",
-      "main",
-    );
-    expect(r.owner).toBe("MeerkatAIChina");
-    expect(r.repo).toBe("foo");
-    expect(r.skillsPath).toBe("skills");
-    expect(r.ref).toBe("main");
+  it("uses custom OSS base URL when provided", () => {
+    const cfg = resolveConfig({ ossBaseUrl: "https://custom.oss.com" });
+    expect(cfg.ossBaseUrl).toBe("https://custom.oss.com");
+  });
+
+  it("uses custom installDir when provided", () => {
+    const cfg = resolveConfig({ installDir: "/custom/path" });
+    expect(cfg.installDir).toBe("/custom/path");
+    expect(cfg.ossBaseUrl).toBe(DEFAULT_OSS_BASE_URL);
   });
 });

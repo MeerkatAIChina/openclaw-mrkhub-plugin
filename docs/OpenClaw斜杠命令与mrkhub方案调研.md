@@ -85,20 +85,20 @@ command-tool: <tool_name>
 
 ### 3.1 需求摘要
 
-自定义斜杠命令 `/mrkhub`，从**自有 GitHub 仓库**（非官方 ClawHub）查询、匹配、安装 skills。
+自定义斜杠命令 `/mrkhub`，从**阿里云 OSS**（非官方 ClawHub）查询、匹配、安装 skills。
 
-**仓库示例：**  
-https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/ling/skills
+**OSS 地址：**  
+https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com
 
 | 场景 | 用户输入示例 | 期望行为 |
 |------|-------------|----------|
-| 查找 | `/mrkhub 我需要一个能进行产品市场调研的 skills` | 在仓库中语义匹配，返回推荐列表 |
+| 查找 | `/mrkhub 我需要一个能进行产品市场调研的 skills` | 在 OSS bucket 中语义匹配，返回推荐列表 |
 | 安装 | `/mrkhub 那就给我安装 manufacturing_value_chain 这个 skills 吧` | 定位 skill，下载到 `~/.agents/skills/` |
 
 ### 3.2 为何不适合单独用 Skill
 
 - **安装**需确定性落盘、路径校验，不能依赖模型是否记得 `exec` 或路径是否正确。
-- **检索**需对接固定 GitHub 目录结构，Skill 本身无代码执行能力。
+- **检索**需对接固定 OSS 目录结构，Skill 本身无代码执行能力。
 - **`command-dispatch: tool`** 仍须插件注册工具，等于仍要写插件。
 - **多轮指代**（「那就安装 xxx」）需在 handler 或 session 中维护上下文。
 
@@ -110,9 +110,10 @@ openclaw-mrkhub-plugin/
 ├── registerTool(mrkhub_search)    // 可选
 ├── registerTool(mrkhub_install)   // 可选
 └── 内部模块
-    ├── githubIndex.ts      // 列仓库、读 SKILL.md / 元数据
+    ├── oss/                // OSS 客户端工具
+    ├── storage/            // 索引管理、读 SKILL.md / 元数据
     ├── matcher.ts          // 关键词 + 可选 LLM 排序
-    └── installer.ts        // clone/sparse checkout → ~/.agents/skills/
+    └── installer.ts        // 从 OSS 下载 → ~/.agents/skills/
 ```
 
 **Handler 分两路：**
@@ -136,8 +137,8 @@ openclaw-mrkhub-plugin/
 
 | 层级 | 内容 | 是否必须 ClawHub |
 |------|------|------------------|
-| 插件 | 提供 `/mrkhub`、GitHub 检索、安装逻辑 | **否** |
-| Skills | 业务技能包（如 `manufacturing_value_chain`） | **否**（由 `/mrkhub` 从自有 GitHub 拉） |
+| 插件 | 提供 `/mrkhub`、OSS 检索、安装逻辑 | **否** |
+| Skills | 业务技能包（如 `manufacturing_value_chain`） | **否**（由 `/mrkhub` 从 OSS 拉取） |
 
 仅当「安装 mrkhub 插件」也绑死在 ClawHub 上时，才会形成循环依赖。应避免：**首次引导用 Git/本地/安装脚本装插件，日常使用 `/mrkhub` 装 skills。**
 
@@ -224,6 +225,7 @@ openclaw gateway restart
 
 ---
 
-## 7. 自有仓库（业务相关）
+## 7. Skills 源（业务相关）
 
-- Skills 源仓库：https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/ling/skills（默认扫描 `skills/` 目录）
+- Skills 索引：`https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/skill-index.yaml`
+- Skills 目录结构：`skills/{skill-name}/SKILL.md`

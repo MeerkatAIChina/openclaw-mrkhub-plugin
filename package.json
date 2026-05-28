@@ -1,7 +1,7 @@
 {
   "name": "@meerkat-ai/openclaw-mrkhub-plugin",
   "version": "0.1.0",
-  "description": "Meerkat skills hub: search and install skills from GitHub via /mrkhub",
+  "description": "Meerkat skills hub: search and install skills from OSS via /mrkhub",
   "type": "module",
   "license": "MIT",
   "repository": {
