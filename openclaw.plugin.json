@@ -16,22 +16,13 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
-      "repositories": {
-        "type": "array",
-        "items": { "type": "string" },
-        "description": "GitHub repos (owner/repo or full URL), skills root auto-detected"
+      "ossBaseUrl": {
+        "type": "string",
+        "description": "OSS bucket base URL for skills (default: https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com)"
       },
       "installDir": {
         "type": "string",
         "description": "Target directory for installed skills (default ~/.agents/skills)"
-      },
-      "githubToken": {
-        "type": "string",
-        "description": "Optional GitHub token for API rate limits or private repos"
-      },
-      "defaultRef": {
-        "type": "string",
-        "description": "Default git ref (branch/tag), default main"
       }
     }
   }

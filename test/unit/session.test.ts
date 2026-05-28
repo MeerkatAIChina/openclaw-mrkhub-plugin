@@ -3,7 +3,7 @@ import { resolveInstallNameFromSession } from "../../src/session/mrkhub-context.
 
 describe("resolveInstallNameFromSession", () => {
   const state = {
-    lastResults: [{ name: "ppt_master", description: "PPT", path: "skills/content/ppt-master", score: 10, repo: { owner: "o", repo: "r", ref: "main", skillsPath: "skills" } }],
+    lastResults: [{ name: "ppt_master", description: "PPT", path: "skills/content/ppt-master", score: 10, baseUrl: "https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com" }],
     updatedAt: Date.now(),
   };
 

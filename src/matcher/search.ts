@@ -1,4 +1,4 @@
-import type { SkillIndexEntry } from "../github/indexer.js";
+import type { SkillIndexEntry } from "../storage/indexer.js";
 
 export type SearchHit = SkillIndexEntry & { score: number };
 

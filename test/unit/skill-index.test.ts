@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   normalizeSkillId,
   parseSkillIndexYaml,
-} from "../../src/github/skill-index.js";
+} from "../../src/storage/skill-index.js";
 
 const SAMPLE = `
 registry: manufacturing-ai-efficiency-Skill
@@ -12,6 +12,10 @@ skills:
   category: ecommerce
   type: workflow
   path: skills/commercial/fast-moving-consumer-goods-supply-chain/
+  files:
+    - README.md
+    - SKILL.md
+    - references/guide.pdf
 - skill_id: manufacturing-ai-efficiency-pro
   name: 制造业 AI 提效分析
   category: manufacturing
@@ -29,6 +33,20 @@ describe("parseSkillIndexYaml", () => {
       path: "skills/commercial/fast-moving-consumer-goods-supply-chain",
       category: "ecommerce",
     });
+  });
+
+  it("parses files list", () => {
+    const items = parseSkillIndexYaml(SAMPLE);
+    expect(items[0]?.files).toEqual([
+      "README.md",
+      "SKILL.md",
+      "references/guide.pdf",
+    ]);
+  });
+
+  it("handles skill without files", () => {
+    const items = parseSkillIndexYaml(SAMPLE);
+    expect(items[1]?.files).toBeUndefined();
   });
 });
 

@@ -3,7 +3,7 @@ import type { Static } from "@sinclair/typebox";
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
 import { handleMrkhubCommand, createMrkhubDeps } from "./command/mrkhub.js";
 import { resolveConfig } from "./config/defaults.js";
-import { findSkillByName, loadSkillIndex } from "./github/indexer.js";
+import { findSkillByName, loadSkillIndex } from "./storage/indexer.js";
 import { installSkill } from "./installer/install.js";
 import type { MrkhubSessionState } from "./session/mrkhub-context.js";
 import { searchSkills } from "./matcher/search.js";
@@ -31,7 +31,7 @@ export function registerMrkhubPlugin(api: OpenClawPluginApi): void {
 
   api.registerCommand({
     name: "mrkhub",
-    description: "Search and install Meerkat skills from GitHub",
+    description: "Search and install Meerkat skills from OSS",
     acceptsArgs: true,
     handler: async (ctx) => {
       const args = (ctx.args ?? "").trim();
@@ -54,7 +54,7 @@ export function registerMrkhubPlugin(api: OpenClawPluginApi): void {
     {
       name: "mrkhub_search",
       label: "mrkhub_search",
-      description: "Search Meerkat skills in configured GitHub repositories",
+      description: "Search Meerkat skills in configured OSS bucket",
       parameters: SearchParamsSchema,
       async execute(_id, params) {
         const { query } = params as SearchParams;
@@ -66,7 +66,7 @@ export function registerMrkhubPlugin(api: OpenClawPluginApi): void {
               name: h.name,
               description: h.description,
               path: h.path,
-              repo: `${h.repo.owner}/${h.repo.repo}`,
+              source: h.baseUrl,
             })),
           ),
         );

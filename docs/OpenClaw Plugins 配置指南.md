@@ -386,7 +386,7 @@ openclaw plugins validate --entry ./dist/index.js
 ```bash
 openclaw config get plugins.entries.mrkhub.config
 openclaw config set plugins.entries.mrkhub.enabled true
-openclaw config set plugins.entries.mrkhub.config.repositories '["owner/repo"]'
+openclaw config set plugins.entries.mrkhub.config.ossBaseUrl 'https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com'
 openclaw config unset plugins.entries.brave.config.webSearch.apiKey
 openclaw config schema                    # 含 plugins 段 JSON Schema
 openclaw config validate
@@ -423,13 +423,8 @@ openclaw plugins inspect mrkhub --runtime --json
       mrkhub: {
         enabled: true,
         config: {
-          repositories: [
-            "MeerkatAIChina/manufacturing-ai-efficiency-Skill", // 默认扫描仓库内 skills/ 目录
-            "https://github.com/MeerkatAIChina/foo/tree/main/skills",
-          ],
+          ossBaseUrl: "https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com",
           installDir: "~/.agents/skills",
-          defaultRef: "main",
-          githubToken: "${GITHUB_TOKEN}",
         },
       },
     },
@@ -545,7 +540,7 @@ openclaw plugins inspect my-plugin --runtime --json
     mrkhub: {
       enabled: true,
       config: {
-        repositories: ["owner/repo"],
+        ossBaseUrl: "https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com",
         installDir: "~/.agents/skills",
       },
     },

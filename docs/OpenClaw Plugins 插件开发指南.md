@@ -510,9 +510,9 @@ OPENCLAW_PLUGIN_LIFECYCLE_TRACE=1 openclaw plugins install ...
 
 本仓库 `@meerkat/openclaw-mrkhub-plugin` 是 **non-capability + registerCommand + optional tools** 形态：
 
-- `/mrkhub` → `registerCommand`（搜索/安装 GitHub skills，默认 bypass LLM）
+- `/mrkhub` → `registerCommand`（搜索/安装 OSS skills，默认 bypass LLM）
 - `mrkhub_search` / `mrkhub_install` → 可选 Agent 工具
-- Skills 索引源 → 默认 `MeerkatAIChina/manufacturing-ai-efficiency-Skill` 仓库 `skills/` 目录（`owner/repo` 未带路径时）
+- Skills 索引源 → 默认 OSS bucket `meerkatai-skills.oss-cn-shanghai.aliyuncs.com`，从 `skill-index.yaml` 读取索引
 - Skills 安装目标 → `~/.agents/skills/`（与官方 Skill 加载路径一致）
 
 开发命令：

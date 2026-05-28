@@ -1,13 +1,9 @@
 export type MrkhubConfig = {
-  repositories: string[];
+  ossBaseUrl: string;
   installDir?: string;
-  githubToken?: string;
-  defaultRef: string;
 };
 
-export type ResolvedRepo = {
-  owner: string;
-  repo: string;
-  ref: string;
-  skillsPath: string;
+export type SkillSource = {
+  path: string;
+  baseUrl: string;
 };

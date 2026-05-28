@@ -1,11 +1,11 @@
 # @meerkat-ai/openclaw-mrkhub-plugin
 
-OpenClaw 插件：通过 `/mrkhub` 从**自有 GitHub 仓库**检索并安装 Meerkat skills（不依赖 ClawHub）。
+OpenClaw 插件：通过 `/mrkhub` 从**阿里云 OSS** 检索并安装 Meerkat skills（不依赖 ClawHub）。
 
 ## 功能
 
 - **斜杠命令** `/mrkhub`：搜索、安装 skills，默认不经过 LLM
-- **语义/关键词匹配**：在配置的 GitHub 仓库中列出候选 skill
+- **语义/关键词匹配**：在配置的 OSS bucket 中列出候选 skill
 - **确定性安装**：下载到 `~/.agents/skills/<name>/`，路径与名称校验
 - **多轮对话**：支持「那就安装第一个」等指代（基于会话内上次搜索结果）
 - **可选 Agent 工具**：`mrkhub_search`、`mrkhub_install`（需在 `tools.allow` 中启用）
@@ -16,7 +16,6 @@ OpenClaw 插件：通过 `/mrkhub` 从**自有 GitHub 仓库**检索并安装 Me
 |----|------|
 | Node.js | ≥ 22.19 |
 | OpenClaw Gateway | ≥ 2026.5.12（与 `package.json` 中 `openclaw.compat` 一致） |
-| GitHub Token | 可选；公开仓库可不配，私有仓库或高频调用建议配置 |
 
 ## 快速开始
 
@@ -81,13 +80,8 @@ openclaw plugins update mrkhub
       mrkhub: {
         enabled: true,
         config: {
-          repositories: [
-            "MeerkatAIChina/manufacturing-ai-efficiency-Skill",
-            "https://github.com/MeerkatAIChina/foo/tree/main/skills",
-          ],
+          ossBaseUrl: "https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com",
           installDir: "~/.agents/skills",
-          defaultRef: "main",
-          githubToken: "${GITHUB_TOKEN}",
         },
       },
     },
@@ -103,14 +97,13 @@ openclaw plugins update mrkhub
 
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `repositories` | `string[]` | 见下方默认仓库 | `owner/repo`、带 `@ref` 或 GitHub URL（含 `tree/<ref>/<path>`） |
+| `ossBaseUrl` | `string` | `https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com` | OSS bucket 基础 URL |
 | `installDir` | `string` | `~/.agents/skills` | skill 安装目录 |
-| `defaultRef` | `string` | `main` | 未指定 ref 时使用的分支/标签 |
-| `githubToken` | `string` | `GITHUB_TOKEN` 环境变量 | GitHub API 认证 |
 
-默认索引仓库：
+默认索引源：
 
-- [manufacturing-ai-efficiency-Skill](https://github.com/MeerkatAIChina/manufacturing-ai-efficiency-Skill/tree/ling/skills)（skills 根目录：`skills`；`owner/repo` 写法未带路径时默认同此）
+- `skill-index.yaml` 位于 OSS bucket 根目录
+- skills 目录结构：`skills/{skill-name}/SKILL.md`
 
 ## 使用示例
 
@@ -135,7 +128,7 @@ skill 命名规则：`a-z`、`0-9`、`_`，字母开头，最长 32 字符。
 ## 与 ClawHub 的关系
 
 - **插件本身**：通过 `git:github.com/...` 或本地路径安装，**不需要** ClawHub
-- **业务 skills**：由 `/mrkhub` 从配置的 GitHub 仓库拉取，**不走** ClawHub skills 市场
+- **业务 skills**：由 `/mrkhub` 从配置的 OSS bucket 拉取，**不走** ClawHub skills 市场
 - **ClawHub**：仅在你主动使用 `openclaw plugins install clawhub:...` 时才涉及
 
 ## 项目结构
@@ -146,7 +139,8 @@ src/
   register.ts        # registerCommand / registerTool
   command/           # /mrkhub 处理
   config/            # 配置解析
-  github/            # 仓库索引
+  oss/               # OSS 客户端工具
+  storage/           # 索引管理
   matcher/           # 搜索匹配
   installer/         # 安装落盘
   session/           # 多轮会话状态
@@ -159,7 +153,7 @@ openclaw.plugin.json # 插件清单
 ```bash
 pnpm install          # 安装依赖
 pnpm verify           # typecheck + test + lint + build
-pnpm smoke            # 端到端冒烟（GitHub 索引 / 搜索 / 安装）
+pnpm smoke            # 端到端冒烟（OSS 索引 / 搜索 / 安装）
 pnpm install:local    # 构建并安装到 ~/.openclaw/extensions/mrkhub
 ```
 
@@ -226,8 +220,7 @@ pnpm install:local    # 构建并安装到 ~/.openclaw/extensions/mrkhub
          mrkhub: {
            enabled: true,
            config: {
-             repositories: ["MeerkatAIChina/manufacturing-ai-efficiency-Skill"],
-             // githubToken: "ghp_xxx",  // 可选，防 GitHub 限流
+             ossBaseUrl: "https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com",
            },
          },
        },
@@ -290,8 +283,8 @@ pnpm install:local    # 构建并安装到 ~/.openclaw/extensions/mrkhub
 |------|----------|------|
 | `/mrkhub` 无响应 | 插件未安装或未启用 | `openclaw plugins list`，确认 `mrkhub` 已启用 |
 | 安装后 skill 不可用 | 未刷新会话 | 执行 `/new` 或 `gateway restart` |
-| GitHub API 403/429 | 限流或未授权 | 配置 `githubToken` |
-| 找不到 skill | 仓库路径或名称不对 | 检查 `repositories` 与 skill 目录是否含 `SKILL.md` |
+| OSS 访问 404 | skill-index.yaml 不存在或路径错误 | 检查 OSS bucket 中是否存在 skill-index.yaml |
+| 找不到 skill | skill 名称错误或未在索引中 | 检查 `skill-index.yaml` 是否包含该 skill |
 | `plugins install` 失败 | 未构建 | 先 `pnpm build` 再安装 |
 | Agent 工具不可用 | 未加入 allowlist | 在 `tools.allow` 中加入工具名 |
 
