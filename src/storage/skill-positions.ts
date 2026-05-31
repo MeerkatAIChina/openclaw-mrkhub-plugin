@@ -1,7 +1,7 @@
 export type SkillPositionYamlEntry = {
     skill_id: string;
     name: string;
-    description: string;
+    description?: string;
     path: string;
     files?: string[];
 };
