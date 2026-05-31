@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { searchSkills } from "../../src/matcher/search.js";
-import type { SkillIndexEntry } from "../../src/storage/indexer.js";
+import type { SkillPositionEntry } from "../../src/storage/indexer.js";
 
-const entries: SkillIndexEntry[] = [
+const entries: SkillPositionEntry[] = [
   {
     name: "market_research",
     description: "产品市场调研与分析",
