@@ -1,51 +1,46 @@
 import type { MrkhubConfig } from '../config/types.js';
 import { fetchText, getSkillPositionsUrl } from '../oss/client.js';
-import { normalizeSkillId, parseSkillIndexYaml, type SkillIndexYamlEntry } from './skill-index.js';
+import { normalizeSkillId, parseSkillPositionsYaml, type SkillPositionYamlEntry } from './skill-positions.js';
 
-export type SkillIndexEntry = {
+export type SkillPositionEntry = {
     name: string;
     description: string;
     path: string;
     baseUrl: string;
-    tags?: string[];
     files?: string[];
 };
 
-function entryFromSkillIndexItem(
-    item: SkillIndexYamlEntry,
+function entryFromPositionItem(
+    item: SkillPositionYamlEntry,
     baseUrl: string
-): SkillIndexEntry | undefined {
+): SkillPositionEntry | undefined {
     const name = normalizeSkillId(item.skill_id);
     if (!name) {
         return undefined;
     }
-    const tags = [item.category, item.type].filter(
-        (t): t is string => typeof t === 'string' && t.length > 0
-    );
     return {
         name,
-        description: item.name,
+        description: item.description ?? item.name,
         path: item.path,
         baseUrl,
-        tags: tags.length > 0 ? tags : undefined,
         files: item.files,
     };
 }
 
-export async function loadSkillIndex(config: MrkhubConfig): Promise<SkillIndexEntry[]> {
+export async function loadSkillPositions(config: MrkhubConfig): Promise<SkillPositionEntry[]> {
     const url = getSkillPositionsUrl(config.ossBaseUrl);
     const raw = await fetchText(url);
-    const items = parseSkillIndexYaml(raw);
+    const items = parseSkillPositionsYaml(raw);
     return items
-        .map(item => entryFromSkillIndexItem(item, config.ossBaseUrl))
-        .filter((entry): entry is SkillIndexEntry => entry !== undefined);
+        .map(item => entryFromPositionItem(item, config.ossBaseUrl))
+        .filter((entry): entry is SkillPositionEntry => entry !== undefined);
 }
 
 export async function findSkillByName(
     config: MrkhubConfig,
     skillName: string
-): Promise<SkillIndexEntry | undefined> {
-    const index = await loadSkillIndex(config);
+): Promise<SkillPositionEntry | undefined> {
+    const index = await loadSkillPositions(config);
     const normalized = normalizeSkillId(skillName);
     return index.find(e => e.name === normalized);
 }
