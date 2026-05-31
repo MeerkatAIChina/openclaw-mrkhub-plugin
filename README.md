@@ -102,7 +102,7 @@ openclaw plugins update mrkhub
 
 默认索引源：
 
-- `skill-index.yaml` 位于 OSS bucket 根目录
+- `skill-positions.yaml` 位于 OSS bucket 根目录
 - skills 目录结构：`skills/{skill-name}/SKILL.md`
 
 ## 使用示例
@@ -283,8 +283,8 @@ pnpm install:local    # 构建并安装到 ~/.openclaw/extensions/mrkhub
 |------|----------|------|
 | `/mrkhub` 无响应 | 插件未安装或未启用 | `openclaw plugins list`，确认 `mrkhub` 已启用 |
 | 安装后 skill 不可用 | 未刷新会话 | 执行 `/new` 或 `gateway restart` |
-| OSS 访问 404 | skill-index.yaml 不存在或路径错误 | 检查 OSS bucket 中是否存在 skill-index.yaml |
-| 找不到 skill | skill 名称错误或未在索引中 | 检查 `skill-index.yaml` 是否包含该 skill |
+| OSS 访问 404 | skill-positions.yaml 不存在或路径错误 | 检查 OSS bucket 中是否存在 skill-positions.yaml |
+| 找不到 skill | skill 名称错误或未在索引中 | 检查 `skill-positions.yaml` 是否包含该 skill |
 | `plugins install` 失败 | 未构建 | 先 `pnpm build` 再安装 |
 | Agent 工具不可用 | 未加入 allowlist | 在 `tools.allow` 中加入工具名 |
 
