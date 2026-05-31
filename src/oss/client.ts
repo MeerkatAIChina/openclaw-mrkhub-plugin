@@ -3,14 +3,12 @@
  * 用于构建 OSS 公共读 URL
  */
 
-const SKILL_INDEX_FILE = 'skill-index.yaml';
-
 /**
- * 获取 skill-index.yaml 的完整 URL
+ * 获取 skill-positions.yaml 的完整 URL
  */
-export function getSkillIndexUrl(baseUrl: string): string {
+export function getSkillPositionsUrl(baseUrl: string): string {
     const normalized = baseUrl.replace(/\/$/, '');
-    return `${normalized}/${SKILL_INDEX_FILE}`;
+    return `${normalized}/skill-positions.yaml`;
 }
 
 /**

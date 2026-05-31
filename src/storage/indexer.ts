@@ -1,5 +1,5 @@
 import type { MrkhubConfig } from '../config/types.js';
-import { fetchText, getSkillIndexUrl } from '../oss/client.js';
+import { fetchText, getSkillPositionsUrl } from '../oss/client.js';
 import { normalizeSkillId, parseSkillIndexYaml, type SkillIndexYamlEntry } from './skill-index.js';
 
 export type SkillIndexEntry = {
@@ -33,7 +33,7 @@ function entryFromSkillIndexItem(
 }
 
 export async function loadSkillIndex(config: MrkhubConfig): Promise<SkillIndexEntry[]> {
-    const url = getSkillIndexUrl(config.ossBaseUrl);
+    const url = getSkillPositionsUrl(config.ossBaseUrl);
     const raw = await fetchText(url);
     const items = parseSkillIndexYaml(raw);
     return items

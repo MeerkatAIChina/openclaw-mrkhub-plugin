@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
   getSkillFileUrl,
-  getSkillIndexUrl,
+  getSkillPositionsUrl,
 } from "../../src/oss/client.js";
 
-describe("getSkillIndexUrl", () => {
-  it("builds skill-index.yaml URL", () => {
-    const url = getSkillIndexUrl("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com");
-    expect(url).toBe("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/skill-index.yaml");
+describe("getSkillPositionsUrl", () => {
+  it("builds skill-positions.yaml URL", () => {
+    const url = getSkillPositionsUrl("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com");
+    expect(url).toBe("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/skill-positions.yaml");
   });
 
   it("handles trailing slash in base URL", () => {
-    const url = getSkillIndexUrl("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/");
-    expect(url).toBe("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/skill-index.yaml");
+    const url = getSkillPositionsUrl("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/");
+    expect(url).toBe("https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com/skill-positions.yaml");
   });
 });
 
