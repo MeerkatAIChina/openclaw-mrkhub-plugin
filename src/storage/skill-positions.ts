@@ -1,9 +1,8 @@
-export type SkillIndexYamlEntry = {
+export type SkillPositionYamlEntry = {
     skill_id: string;
     name: string;
+    description: string;
     path: string;
-    category?: string;
-    type?: string;
     files?: string[];
 };
 
@@ -16,9 +15,10 @@ export function normalizeSkillId(skillId: string): string {
         .replace(/_+/g, '_');
 }
 
-export function parseSkillIndexYaml(raw: string): SkillIndexYamlEntry[] {
-    const skills: SkillIndexYamlEntry[] = [];
-    let current: Partial<SkillIndexYamlEntry> | null = null;
+export function parseSkillPositionsYaml(raw: string): SkillPositionYamlEntry[] {
+    const skills: SkillPositionYamlEntry[] = [];
+    let current: Partial<SkillPositionYamlEntry> | null = null;
+    let inSkillsList = false;
     let inFilesList = false;
 
     for (const line of raw.split(/\r?\n/)) {
@@ -27,10 +27,21 @@ export function parseSkillIndexYaml(raw: string): SkillIndexYamlEntry[] {
             continue;
         }
 
+        // 检测 skills: 列表开始
+        if (trimmed === 'skills:') {
+            inSkillsList = true;
+            continue;
+        }
+
+        // 只在 skills 列表内处理条目
+        if (!inSkillsList) {
+            continue;
+        }
+
         // 检测新的 skill 条目
         if (trimmed.startsWith('- skill_id:')) {
             if (current?.skill_id && current.name && current.path) {
-                skills.push(current as SkillIndexYamlEntry);
+                skills.push(current as SkillPositionYamlEntry);
             }
             current = { skill_id: trimmed.slice('- skill_id:'.length).trim() };
             inFilesList = false;
@@ -65,17 +76,15 @@ export function parseSkillIndexYaml(raw: string): SkillIndexYamlEntry[] {
         // 解析普通字段
         if (trimmed.startsWith('name:')) {
             current.name = trimmed.slice('name:'.length).trim();
+        } else if (trimmed.startsWith('description:')) {
+            current.description = trimmed.slice('description:'.length).trim();
         } else if (trimmed.startsWith('path:')) {
             current.path = trimmed.slice('path:'.length).trim().replace(/\/+$/, '');
-        } else if (trimmed.startsWith('category:')) {
-            current.category = trimmed.slice('category:'.length).trim();
-        } else if (trimmed.startsWith('type:')) {
-            current.type = trimmed.slice('type:'.length).trim();
         }
     }
 
     if (current?.skill_id && current.name && current.path) {
-        skills.push(current as SkillIndexYamlEntry);
+        skills.push(current as SkillPositionYamlEntry);
     }
 
     return skills;
