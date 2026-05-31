@@ -1,6 +1,6 @@
-import type { SkillIndexEntry } from "../storage/indexer.js";
+import type { SkillPositionEntry } from "../storage/indexer.js";
 
-export type SearchHit = SkillIndexEntry & { score: number };
+export type SearchHit = SkillPositionEntry & { score: number };
 
 const QUERY_FILLER_RE =
   /(?:帮我|给我|请|找|搜索|查询|有没有|哪些|什么|一下|相关的?|skills?|skill)/gi;
@@ -17,7 +17,7 @@ function tokenize(text: string): string[] {
 }
 
 export function searchSkills(
-  entries: SkillIndexEntry[],
+  entries: SkillPositionEntry[],
   query: string,
   limit = 5,
 ): SearchHit[] {
@@ -33,7 +33,6 @@ export function searchSkills(
       entry.name,
       entry.description,
       entry.path,
-      ...(entry.tags ?? []),
     ]
       .join(" ")
       .toLowerCase();
