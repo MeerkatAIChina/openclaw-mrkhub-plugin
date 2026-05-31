@@ -3,7 +3,7 @@ import type { Static } from "@sinclair/typebox";
 import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
 import { handleMrkhubCommand, createMrkhubDeps } from "./command/mrkhub.js";
 import { resolveConfig } from "./config/defaults.js";
-import { findSkillByName, loadSkillIndex } from "./storage/indexer.js";
+import { findSkillByName, loadSkillPositions } from "./storage/indexer.js";
 import { installSkill } from "./installer/install.js";
 import type { MrkhubSessionState } from "./session/mrkhub-context.js";
 import { searchSkills } from "./matcher/search.js";
@@ -58,7 +58,7 @@ export function registerMrkhubPlugin(api: OpenClawPluginApi): void {
       parameters: SearchParamsSchema,
       async execute(_id, params) {
         const { query } = params as SearchParams;
-        const index = await loadSkillIndex(config());
+        const index = await loadSkillPositions(config());
         const hits = searchSkills(index, query);
         return toolTextResult(
           JSON.stringify(
