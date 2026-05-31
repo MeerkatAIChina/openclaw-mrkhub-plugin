@@ -51,7 +51,7 @@ pnpm typecheck
 - `src/config/defaults.ts`: 配置解析，默认 OSS base URL `https://meerkatai-skills.oss-cn-shanghai.aliyuncs.com`
 - `src/oss/client.ts`: OSS 客户端工具，构建公共读 URL
 - `src/storage/indexer.ts`: 从 OSS 加载 skill 索引
-- `src/storage/skill-index.ts`: `skill-index.yaml` 解析与 skill ID 规范化
+- `src/storage/skill-positions.ts`: `skill-positions.yaml` 解析与 skill ID 规范化
 - `src/matcher/search.ts`: 语义/关键词匹配算法（纯函数，便于单测）
 - `src/installer/install.ts`: 从 OSS 下载 skill 文件到本地目录
 - `src/installer/paths.ts`: 路径解析（`~/.agents/skills/`）
@@ -74,7 +74,7 @@ pnpm typecheck
 
 ### OSS 索引策略
 
-1. 从配置的 `ossBaseUrl` 获取 `skill-index.yaml`
+1. 从配置的 `ossBaseUrl` 获取 `skill-positions.yaml`
 2. 解析索引文件获取 skill 列表（包含 name、description、path）
 3. 安装时从 OSS 直接下载 skill 目录下的文件（SKILL.md、skill.json 等）
 
