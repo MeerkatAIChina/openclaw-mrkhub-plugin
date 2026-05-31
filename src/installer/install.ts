@@ -1,6 +1,6 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import type { SkillIndexEntry } from "../storage/indexer.js";
+import type { SkillPositionEntry } from "../storage/indexer.js";
 import { fetchBuffer, getSkillFileUrl } from "../oss/client.js";
 import type { MrkhubConfig } from "../config/types.js";
 import { resolveInstallDir, skillInstallPath } from "./paths.js";
@@ -17,7 +17,7 @@ async function downloadFile(url: string, dest: string): Promise<void> {
  * 否则回退到只下载 SKILL.md
  */
 async function downloadSkillFiles(
-  entry: SkillIndexEntry,
+  entry: SkillPositionEntry,
   destDir: string,
 ): Promise<void> {
   // 如果有 files 列表，下载所有文件
@@ -54,7 +54,7 @@ export type InstallResult = {
 
 export async function installSkill(
   config: MrkhubConfig,
-  entry: SkillIndexEntry,
+  entry: SkillPositionEntry,
 ): Promise<InstallResult> {
   const installRoot = resolveInstallDir(config.installDir);
   const target = skillInstallPath(installRoot, entry.name);

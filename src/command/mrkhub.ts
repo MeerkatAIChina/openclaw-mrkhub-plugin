@@ -1,6 +1,6 @@
 import { resolveConfig } from "../config/defaults.js";
 import type { MrkhubConfig } from "../config/types.js";
-import { findSkillByName, loadSkillIndex } from "../storage/indexer.js";
+import { findSkillByName, loadSkillPositions } from "../storage/indexer.js";
 import { installSkill } from "../installer/install.js";
 import { parseIntent } from "../intent/parse.js";
 import { searchSkills } from "../matcher/search.js";
@@ -38,7 +38,7 @@ export async function handleMrkhubCommand(
   }
 
   if (intent.kind === "search") {
-    const index = await loadSkillIndex(config);
+    const index = await loadSkillPositions(config);
     const hits = searchSkills(index, intent.query);
     const next: MrkhubSessionState = {
       lastResults: hits,
