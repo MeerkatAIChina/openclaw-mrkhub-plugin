@@ -26,4 +26,5 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm verify
+      - run: npm version --no-git-tag-version ${GITHUB_REF_NAME#v}
       - run: npm publish --access public
