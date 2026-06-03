@@ -27,4 +27,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm verify
       - run: npm version --no-git-tag-version ${GITHUB_REF_NAME#v}
-      - run: npm publish --access public
+      - name: Publish to npm
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          if [[ "$VERSION" == *-* ]]; then
+            PREREL_TYPE="${VERSION##*-}"
+            PREREL_TYPE="${PREREL_TYPE%%.*}"
+            npm publish --access public --tag "$PREREL_TYPE"
+          else
+            npm publish --access public
+          fi
